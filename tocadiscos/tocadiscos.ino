@@ -14,7 +14,7 @@ void loop() {
   Serial.print(prueba);
   Serial.print("\n");  
   
-  if(prueba>=700){
+  if(prueba>=90){
     digitalWrite(led, HIGH);
   }else{
     digitalWrite(led, LOW); 
