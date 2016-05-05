@@ -14,7 +14,8 @@ void loop() {
   Serial.print(prueba);
   Serial.print("\n");  
   
-  if(prueba>=90){
+  //if(prueba>=90){//valor del sesor del plato
+  if(prueba>=10){
     digitalWrite(led, HIGH);
   }else{
     digitalWrite(led, LOW); 
