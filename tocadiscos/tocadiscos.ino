@@ -2,14 +2,19 @@ int led = 12;
 int motor = 10;
 long start=0;
 
-int veces=0;
-int valorpre=0;
-int base =70;
-int valoroptimo=1743;
-int margen=20;
-int distancia=0,lento=0,rapido=0,velocidad = 0,estable=0;
+// int base =95; // parte externa
+int base= 110;
+//int valoroptimo=1743;
+//int valoroptimo=59; //parte externa
 
-int sum=0;int tot=0;
+int valoroptimo= 54;
+int valoroptimof=54;
+
+int distancia=0,lento=0,rapido=0,velocidad = 0,estable=0;
+double extremo=0,medio=0,interior=0;
+int minimo=140,maximo=200;
+int veces=0;
+int promedio=0;
 void setup() {  
   Serial.begin(9600);  
   pinMode(led, OUTPUT);     
@@ -23,58 +28,90 @@ void setup() {
   delay(random(1000,3000));
   attachInterrupt(0,react,RISING); 
   start= millis();
+
 }
 
 void loop() {
  
   if(analogRead(A0)<20){
     base=100;
-    valoroptimo=1277;
+    valoroptimo=71;
   }
   analogWrite(motor, base);
- /*Serial.print(analogRead(A5));
-  Serial.print("\n"); */
   
+  int l=analogRead(A5);
+  if((l)<minimo ){
+    minimo=l;
+  }
+  if((l)>maximo ){
+    maximo=l;
+  }
+  int p= ((minimo+maximo)/2);
+ 
+  if(promedio!=p){
+  //Serial.print(p);
+  //Serial.print("  vof: ");
+  
+  if((p-promedio)<0){
+    minimo=140;
+    maximo=200;
+  }
+  promedio=p;
+
+  extremo =  FuncionGradoInversa(promedio, 208, 235);
+  medio=    FuncionTriangulo( promedio,230, 245, 260);
+  interior=  FuncionGrado(promedio, 250, 280);
+
+  valoroptimof= valoroptimo-((extremo*2)+(medio*0)+(interior*-2)/(extremo+medio+interior));
+
+  //Serial.print(valoroptimof);
+  //Serial.print("\n");
+  }
+
+  
+ 
 }
 
 void react(){
   long fin= millis();
-  if(fin-start>=500){
-  //Serial.print(fin-start);
+  if(veces==3){
+  if(fin-start>=10 ){
+    int tiempo=fin-start;
+   //Serial.print("//> tiempo :");
+  //Serial.print(tiempo);
   //Serial.print("\n"); 
   
-  distancia=valoroptimo-(fin-start);
+  
+  distancia=valoroptimof-(tiempo);
   start= millis();
-  if(distancia==0){
+   
+  if(distancia<=10 && distancia>=-10){
     digitalWrite(led, HIGH);
-    Serial.print(" //>");
-  Serial.print(base);
+   Serial.print(0);
+  Serial.print("\n");
   }else{
     digitalWrite(led, LOW);
+    
     estable=FuncionTriangulo(distancia,-20,0,20);
-  lento=FuncionGrado(distancia, 5, 10);
-  rapido=FuncionGradoInversa(distancia, -10, -5);
-  //lento=FuncionTrapezoide(distancia,1,margen,1145,1245);
-  //rapido=FuncionTrapezoide(distancia,-900,-950,-margen,-1);
-  //if(distancia>=-950 && distancia<0) base=base+1;
-  //if(distancia>0 && distancia<=1145) base=base-1;
-    base= base+((lento*-2)+(estable*0)+(rapido*2)/(rapido+estable+lento));
+    lento=FuncionGrado(distancia, 5, 10);
+    rapido=FuncionGradoInversa(distancia, -10, -5);
+   
+    base= base+((lento*-1)+(estable*0)+(rapido*1)/(rapido+estable+lento));
   }
-
-  Serial.print("//> distancia:");
-  Serial.print(distancia); 
-  Serial.print(" //>");
-  Serial.print(base);  
-  Serial.print("\n"); 
   
-  Serial.print(analogRead(A5));
-  Serial.print("\n"); 
- 
-  
-
+  Serial.print(distancia);
+  Serial.print("\n");
+  /*Serial.print(" //> distancia:");
+  Serial.print(distancia);
+   
+  Serial.print("> base ");
+  Serial.print(base);
+  Serial.print("\n");*/
  
   }
- 
+  }else{
+    veces=veces+1;
+  }
 }
 
 
