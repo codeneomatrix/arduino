@@ -62,7 +62,7 @@ void loop() {
   medio=    FuncionTriangulo( promedio,230, 245, 260);
   interior=  FuncionGrado(promedio, 250, 280);
 
-  valoroptimof= valoroptimo-((extremo*2)+(medio*0)+(interior*-2)/(extremo+medio+interior));
+  valoroptimof= valoroptimo-((extremo*1.4)+(medio*0)+(interior*-2)/(extremo+medio+interior));
 
   //Serial.print(valoroptimof);
   //Serial.print("\n");
@@ -87,7 +87,7 @@ void react(){
    
   if(distancia<=10 && distancia>=-10){
     digitalWrite(led, HIGH);
-   Serial.print(0);
+   Serial.print(valoroptimof);
   Serial.print("\n");
   }else{
     digitalWrite(led, LOW);
@@ -99,7 +99,7 @@ void react(){
     base= base+((lento*-1)+(estable*0)+(rapido*1)/(rapido+estable+lento));
   }
   
-  Serial.print(distancia);
+  Serial.print(valoroptimof+distancia);
   Serial.print("\n");
   /*Serial.print(" //> distancia:");
   Serial.print(distancia);
